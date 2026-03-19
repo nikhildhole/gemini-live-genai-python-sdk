@@ -56,8 +56,6 @@ function handleJsonMessage(msg) {
     
     const resultMsg = msg.isLead ? "HOT LEAD (Transferring...)" : "Not a lead (Ending call)";
     appendMessage("system", `--- CALL ENDED: ${resultMsg} ---`);
-    sessionEndMessageDiv.textContent = msg.isLead ? "Call Ended - HOT LEAD" : "Call Ended - Not a lead";
-    sessionEndMessageDiv.className = msg.isLead ? "status connected" : "status disconnected";
     
     setTimeout(() => {
         geminiClient.disconnect();
@@ -91,6 +89,7 @@ function appendMessage(type, text) {
   msgDiv.className = `message ${type}`;
   msgDiv.textContent = text;
   chatLog.appendChild(msgDiv);
+  sessionEndMessageDiv.appendChild(msgDiv.cloneNode(true));
   chatLog.scrollTop = chatLog.scrollHeight;
   return msgDiv;
 }
@@ -156,6 +155,7 @@ function resetUI() {
 
   micBtn.textContent = "Start Mic";
   chatLog.innerHTML = "";
+  sessionEndMessageDiv.innerHTML =""
   connectBtn.disabled = false;
 }
 
