@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 MODEL = os.getenv("MODEL", "gemini-2.5-flash-native-audio-preview-12-2025")
 
 SYSTEM_PROMPT_1 = (
-    "You are a Lead Qualifier bot for a local home renovation company. Introduce yourself first. "
+    "You are a Lead Qualifier bot for a local home renovation company."
     "Your job is to filter incoming calls by asking three specific 'Yes/No' questions. "
     "Ask them one by one:\n"
     "1) Do you own your home?\n"
@@ -104,6 +104,7 @@ async def websocket_endpoint(websocket: WebSocket):
     logger.info(f"WebSocket connection accepted. Bot: {bot_selection}")
 
     audio_input_queue = asyncio.Queue()
+    text_input_queue = asyncio.Queue()
 
 
     async def audio_output_callback(data):
@@ -161,6 +162,7 @@ async def websocket_endpoint(websocket: WebSocket):
         try:
             async for event in gemini_client.start_session(
                 audio_input_queue=audio_input_queue,
+                text_input_queue=text_input_queue,
                 audio_output_callback=audio_output_callback,
                 audio_interrupt_callback=audio_interrupt_callback,
             ):
@@ -180,6 +182,7 @@ async def websocket_endpoint(websocket: WebSocket):
         except Exception as e:
             logger.error(f"Error in Gemini session: {e}")
 
+    await text_input_queue.put("Hello")
     receive_task = asyncio.create_task(receive_from_client())
     session_task = asyncio.create_task(run_session())
 

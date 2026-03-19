@@ -29,7 +29,7 @@ class GeminiLive:
         self.tool_mapping = tool_mapping or {}
         self.system_instruction = system_instruction or "You are a helpful AI assistant. Keep your responses concise. Speak in a friendly Irish accent."
 
-    async def start_session(self, audio_input_queue, audio_output_callback, audio_interrupt_callback=None):
+    async def start_session(self, audio_input_queue, text_input_queue, audio_output_callback, audio_interrupt_callback=None):
         config = types.LiveConnectConfig(
             response_modalities=[types.Modality.AUDIO],
             speech_config=types.SpeechConfig(
@@ -59,7 +59,14 @@ class GeminiLive:
                 except asyncio.CancelledError:
                     pass
 
-
+            async def send_text():
+                try:
+                    while True:
+                        text = await text_input_queue.get()
+                        logger.info(f"Sending text to Gemini: {text}")
+                        await session.send_realtime_input(text=text)
+                except asyncio.CancelledError:
+                    pass
 
             event_queue = asyncio.Queue()
 
@@ -129,7 +136,7 @@ class GeminiLive:
                     await event_queue.put(None)
 
             send_audio_task = asyncio.create_task(send_audio())
-
+            send_text_task = asyncio.create_task(send_text())
             receive_task = asyncio.create_task(receive_loop())
 
             try:
@@ -144,5 +151,5 @@ class GeminiLive:
                     yield event
             finally:
                 send_audio_task.cancel()
-
+                send_text_task.cancel()
                 receive_task.cancel()
