@@ -1,6 +1,7 @@
 // --- Main Application Logic ---
 
 const statusDiv = document.getElementById("status");
+const sessionEndMessageDiv = document.getElementById("session-end-message");
 const authSection = document.getElementById("auth-section");
 const appSection = document.getElementById("app-section");
 const sessionEndSection = document.getElementById("session-end-section");
@@ -55,8 +56,8 @@ function handleJsonMessage(msg) {
     
     const resultMsg = msg.isLead ? "HOT LEAD (Transferring...)" : "Not a lead (Ending call)";
     appendMessage("system", `--- CALL ENDED: ${resultMsg} ---`);
-    statusDiv.textContent = msg.isLead ? "Call Ended - HOT LEAD" : "Call Ended - Not a lead";
-    statusDiv.className = msg.isLead ? "status connected" : "status disconnected";
+    sessionEndMessageDiv.textContent = msg.isLead ? "Call Ended - HOT LEAD" : "Call Ended - Not a lead";
+    sessionEndMessageDiv.className = msg.isLead ? "status connected" : "status disconnected";
     
     setTimeout(() => {
         geminiClient.disconnect();
