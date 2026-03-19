@@ -1,88 +1,226 @@
-# Gemini Live API - Python SDK & Vanilla JS
+# VoiceBot SDK - Real-Time AI Conversational Agents
 
-A demonstration of the Gemini Live API using the [Google Gen AI Python SDK](https://github.com/googleapis/python-genai) for the backend and vanilla JavaScript for the frontend. This example shows how to build a real-time multimodal application with a robust Python backend handling the API connection.
+A custom-built Python SDK and web application demonstrating real-time voice-based conversational AI agents using advanced multimodal capabilities. This project showcases two specialized voice bots: a home renovation lead qualifier and a personal loan eligibility screener, built with a robust FastAPI backend and a clean vanilla JavaScript frontend.
+
+## Overview
+
+This application provides a framework for creating intelligent voice bots that can conduct structured conversations, qualify leads, and make decisions in real-time. The system leverages cutting-edge AI for natural speech processing, transcription, and automated decision-making.
+
+## Key Features
+
+- **Dual Bot System**: Two distinct conversational agents with specialized qualification logic
+- **Real-Time Audio Processing**: Bidirectional audio streaming with low-latency response
+- **Automated Lead Qualification**: Structured question flows with intelligent decision-making
+- **WebSocket Communication**: Efficient real-time data exchange between frontend and backend
+- **Transcription Services**: Automatic speech-to-text for both user input and AI responses
+- **Tool Integration**: Custom function calling for automated actions (call termination, lead classification)
+- **Cross-Platform Compatibility**: Works on modern web browsers with microphone access
+
+## Bots Included
+
+### 1. Home Renovation Lead Qualifier
+
+A specialized bot for a local home renovation company that filters potential customers through three critical qualification questions:
+
+- Home ownership verification
+- Budget assessment ($10,000+ threshold)
+- Timeline confirmation (within 3 months)
+
+**Outcome**: Classifies leads as "Hot" or "Not Qualified" and handles call routing accordingly.
+
+### 2. QuickRupee Loan Eligibility Screener
+
+A prototype voice bot for a digital lending startup that screens personal loan applicants based on:
+
+- Employment status (salaried employee)
+- Income verification (₹25,000+ monthly in-hand salary)
+- Location eligibility (metro cities: Delhi, Mumbai, Bangalore)
+
+**Outcome**: Determines applicant eligibility and manages follow-up communication.
 
 ## Quick Start
 
-### 1. Backend Setup
+### Prerequisites
 
-Install dependencies and start the FastAPI server using `uv`:
+- Python 3.8+
+- A valid Gemini API key from Google AI Studio
+- Modern web browser with microphone permissions
 
-```bash
-# Create a virtual environment and install dependencies
-uv venv
-source .venv/bin/activate
-uv pip install -r requirements.txt
+### Installation
 
-# Start the server
-uv run main.py
+1. **Clone and setup environment:**
+
+   ```bash
+   git clone <your-repo-url>
+   cd voicebot-sdk
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+
+2. **Configure API Key:**
+   Create a `.env` file in the project root:
+
+   ```
+   GEMINI_API_KEY=your_api_key_here
+   ```
+
+3. **Launch the application:**
+
+   ```bash
+   python main.py
+   ```
+
+4. **Access the interface:**
+   Open your browser and navigate to `http://localhost:8000`
+
+## Architecture
+
+### Backend Components
+
+#### `main.py` - FastAPI Server
+
+- Handles WebSocket connections for real-time communication
+- Manages bot selection and configuration
+- Processes audio streams and event routing
+- Implements CORS for frontend integration
+
+#### `gemini_live.py` - AI Engine Wrapper
+
+- Custom wrapper around Google's Gen AI SDK
+- Manages live session connections and audio streaming
+- Handles tool function calls and responses
+- Processes transcription events and interruptions
+
+### Frontend Components
+
+#### `index.html` - User Interface
+
+- Clean, responsive web interface
+- Bot selection controls
+- Real-time status indicators
+- Session management buttons
+
+#### `main.js` - Application Logic
+
+- UI state management
+- Bot selection handling
+- Connection lifecycle management
+
+#### `gemini-client.js` - Communication Layer
+
+- WebSocket client implementation
+- Message routing and event handling
+- Audio data transmission
+
+#### `media-handler.js` - Audio Processing
+
+- Microphone access and audio capture
+- Real-time audio streaming
+- Playback of AI responses
+
+#### `pcm-processor.js` - Audio Worklet
+
+- Low-level PCM audio processing
+- Efficient audio data handling
+
+## Configuration Options
+
+### Environment Variables
+
+- `GEMINI_API_KEY`: Your Google AI Studio API key (required)
+- `MODEL`: AI model selection (default: gemini-2.5-flash-native-audio-preview-12-2025)
+
+### Bot Selection
+
+Pass `?bot=bot1` or `?bot=bot2` in the WebSocket URL to select the desired bot.
+
+## API Reference
+
+### WebSocket Endpoint: `/ws`
+
+**Query Parameters:**
+
+- `api_key`: Override the default API key
+- `bot`: Select bot (`bot1` for renovation, `bot2` for loans)
+
+**Message Types:**
+
+- Audio chunks: Binary data for real-time audio
+- Events: JSON objects for transcriptions, tool calls, session status
+
+### Tool Functions
+
+#### `end_call(isLead: boolean)`
+
+Terminates the conversation and classifies the result.
+
+- `isLead: true` - Qualified lead, triggers agent transfer
+- `isLead: false` - Disqualified, ends session politely
+
+## Development
+
+### Project Structure
+
 ```
-
-### 2. Frontend
-
-Open your browser and navigate to:
-
-[http://localhost:8000](http://localhost:8000)
-
-## Features
-
-- **Google Gen AI SDK**: Uses the official Python SDK (`google-genai`) for simplified API interaction.
-- **FastAPI Backend**: Robust, async-ready web server handling WebSocket connections.
-- **Real-time Streaming**: Bi-directional audio and video streaming.
-- **Tool Use**: Demonstrates how to register and handle server-side tools.
-- **Vanilla JS Frontend**: Lightweight frontend with no build steps or framework dependencies.
-
-## Project Structure
-
-```
-/
-├── main.py             # FastAPI server & WebSocket endpoint
-├── gemini_live.py      # Gemini Live API wrapper using Gen AI SDK
-├── requirements.txt    # Python dependencies
+voicebot-sdk/
+├── main.py                 # FastAPI application server
+├── gemini_live.py          # AI session management
+├── requirements.txt        # Python dependencies
+├── .env                    # Environment configuration
 └── frontend/
-    ├── index.html      # User Interface
-    ├── main.js         # Application logic
-    ├── gemini-client.js # WebSocket client for backend communication
-    ├── media-handler.js # Audio/Video capture and playback
-    └── pcm-processor.js # AudioWorklet for PCM processing
+    ├── index.html          # Main web interface
+    ├── main.js             # UI application logic
+    ├── gemini-client.js    # WebSocket communication
+    ├── media-handler.js    # Audio capture/playback
+    ├── pcm-processor.js    # Audio processing worklet
+    └── style.css           # Interface styling
 ```
 
-## Configuration
+### Adding New Bots
 
-You can configure the application by setting environment variables or by using a `.env` file.
+1. Define a new system prompt in `main.py`
+2. Add bot selection logic in the WebSocket handler
+3. Update the frontend radio buttons if needed
+4. Test the qualification flow
 
-**Important:** You must set the `GEMINI_API_KEY` to your Google AI Studio API key.
+### Customization
 
-1.  Create a `.env` file in the root directory.
-2.  Add your API key:
+The system is designed to be easily extensible:
 
-```env
-GEMINI_API_KEY=your_api_key_here
-```
+- Modify system prompts for different conversation flows
+- Add new tool functions for additional actions
+- Customize audio settings and voice selection
+- Extend the frontend for additional UI features
 
-Alternatively, you can set it in your shell:
+## Security Considerations
 
-```bash
-export GEMINI_API_KEY=your_api_key_here
-```
+- Store API keys securely using environment variables
+- Implement proper CORS policies for production deployment
+- Validate WebSocket origins and messages
+- Monitor API usage and implement rate limiting
 
-## Core Components
+## Troubleshooting
 
-### Backend (`gemini_live.py`)
+### Common Issues
 
-The `GeminiLive` class wraps the `genai.Client` to manage the session:
+**Microphone Access Denied:**
 
-```python
-# Connects using the SDK
-async with self.client.aio.live.connect(model=self.model, config=config) as session:
-    # Manages input/output queues
-    await asyncio.gather(
-        send_audio(),
-        send_video(),
-        receive_responses()
-    )
-```
+- Ensure HTTPS in production or localhost development
+- Check browser permissions for microphone access
 
-### Frontend (`gemini-client.js`)
+**WebSocket Connection Failed:**
 
-The frontend communicates with the FastAPI backend via WebSockets, sending base64-encoded media chunks and receiving audio responses.
+- Verify API key is correctly set
+- Check network connectivity and firewall settings
+- Confirm the server is running on port 8000
+
+**Audio Quality Issues:**
+
+- Test microphone input levels
+- Check browser compatibility for WebRTC
+- Verify audio format compatibility
+
+## Contributing
+
+This project demonstrates custom implementation of real-time AI conversational systems. For modifications or extensions, ensure compatibility with the existing WebSocket protocol and tool function interfaces.
