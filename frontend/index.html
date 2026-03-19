@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Realtime Voice bot demo</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Realtime Voice bot demo</h1>
+        <div style="display: flex; gap: 10px; align-items: center">
+          <div id="status" class="status disconnected">Disconnected</div>
+        </div>
+      </header>
+
+      <main>
+        <div class="input-group">
+          <label for="gemini_api_key_input">Gemini API Key</label>
+          <input type="text" id="gemini_api_key_input" placeholder="Enter your Gemini API Key..." />
+        </div>
+
+        <div class="auth-section" id="auth-section">
+          <div class="radio-group">
+            <input type="radio" name="bot" id="bot1" value="bot1" checked />
+            <label for="bot1">Home Renovation Bot</label>
+            <input type="radio" name="bot" id="bot2" value="bot2" />
+            <label for="bot2">QuickRupee Loan Bot</label>
+          </div>
+          <div
+            class="description-box"
+            style="
+              margin-bottom: 20px;
+              padding: 15px;
+              background: #f5f5f5;
+              border-radius: 8px;
+              text-align: left;
+            "
+          >
+          </div>
+          <p>Click below to connect.</p>
+          <button id="connectBtn" class="btn">Connect</button>
+        </div>
+
+        <div class="session-end-section hidden" id="session-end-section">
+          <h2>Session Ended</h2>
+          <button id="restartBtn" class="btn">Start New Session</button>
+        </div>
+
+        <div class="app-section hidden" id="app-section">
+          <div class="app-grid">
+            <div class="left-panel">
+
+              <div class="controls">
+                <button id="micBtn" class="btn icon-btn">Start Mic</button>
+
+                <button id="disconnectBtn" class="btn icon-btn danger">
+                  Disconnect
+                </button>
+              </div>
+            </div>
+
+            <div class="right-panel">
+              <div class="chat-log" id="chat-log"></div>
+
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="/static/media-handler.js"></script>
+    <script src="/static/gemini-client.js"></script>
+    <script src="/static/main.js"></script>
+  </body>
+</html>
